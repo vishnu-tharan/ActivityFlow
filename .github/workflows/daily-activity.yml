@@ -16,14 +16,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Update daily log
-        run: |
-          echo "- Automated update on $(date)" >> daily_activity.md
-          
-      - name: Commit and push changes
+      - name: Generate Multiple Commits
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add daily_activity.md
-          git commit -m "Automated daily activity update"
+          
+          # Generate a random number of commits between 12 and 16
+          NUM_COMMITS=$(( (RANDOM % 5) + 12 ))
+          
+          for i in $(seq 1 $NUM_COMMITS); do
+            echo "- Automated activity update (Commit $i of $NUM_COMMITS) on $(date)" >> daily_activity.md
+            git add daily_activity.md
+            git commit -m "Automated activity record #$i"
+          done
+          
           git push
